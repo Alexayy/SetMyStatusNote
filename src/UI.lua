@@ -68,9 +68,9 @@ local colorPreview = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 colorPreview:SetPoint("LEFT", colorLabel, "RIGHT", 8, 0)
 colorPreview:SetText("Sample")
 
-local colorDropdown = CreateFrame("Frame", "SMSN_Color_DropDown", frame, "UIDropDownMenuTemplate")
+local colorDropdown = CreateFrame("DropdownButton", "SMSN_Color_DropDown", frame, "WoWStyle1DropdownTemplate")
 colorDropdown:SetPoint("LEFT", colorPreview, "RIGHT", 0, -4)
-UIDropDownMenu_SetWidth(colorDropdown, 140)
+colorDropdown:SetWidth(140)
 
 local selectedColorKey = SMSN.db.color or "WHITE"
 
@@ -80,23 +80,16 @@ function UI:RefreshColorPreview()
     if option then
         colorPreview:SetTextColor(option.rgb[1], option.rgb[2], option.rgb[3], 1)
         colorPreview:SetText(option.label)
-        UIDropDownMenu_SetText(colorDropdown, option.label)
+        colorDropdown:SetText(option.label)
     end
 end
 
-UIDropDownMenu_Initialize(colorDropdown, function(_, level)
-    if not level then
-        return
-    end
+colorDropdown:SetupMenu(function(_, rootDescription)
     for _, option in ipairs(SMSN.ColorOptions) do
-        local info = UIDropDownMenu_CreateInfo()
-        info.text = option.label
-        info.func = function()
+        rootDescription:CreateRadio(option.label, function() return selectedColorKey == option.key end, function()
             selectedColorKey = option.key
             UI:RefreshColorPreview()
-        end
-        info.checked = (selectedColorKey == option.key)
-        UIDropDownMenu_AddButton(info)
+        end)
     end
 end)
 
@@ -197,10 +190,10 @@ countLabel:SetPoint("LEFT", iconsLabel, "RIGHT", 8, 0)
 countLabel:SetText("(0/" .. Constants.MAX_ICONS .. ")")
 frame.countLabel = countLabel
 
-local sourceDropdown = CreateFrame("Frame", "SMSN_Source_DropDown", frame, "UIDropDownMenuTemplate")
+local sourceDropdown = CreateFrame("DropdownButton", "SMSN_Source_DropDown", frame, "WoWStyle1DropdownTemplate")
 sourceDropdown:SetPoint("TOPRIGHT", -28, -162)
-UIDropDownMenu_SetWidth(sourceDropdown, 170)
-UIDropDownMenu_SetText(sourceDropdown, "Source: Spells")
+sourceDropdown:SetWidth(170)
+sourceDropdown:SetText("Source: Spells")
 
 local currentCategory = "spells"
 
@@ -209,25 +202,18 @@ local function setCategory(key)
     currentCategory = key
     local category = IconSources.ByKey[key]
     if category then
-        UIDropDownMenu_SetText(sourceDropdown, "Source: " .. category.label)
+        sourceDropdown:SetText("Source: " .. category.label)
     end
     frame.offsetRow = 0
     frame.scroll:SetValue(0)
     UI:UpdateGrid()
 end
 
-UIDropDownMenu_Initialize(sourceDropdown, function(_, level)
-    if not level then
-        return
-    end
+sourceDropdown:SetupMenu(function(_, rootDescription)
     for _, category in ipairs(IconSources.Categories) do
-        local info = UIDropDownMenu_CreateInfo()
-        info.text = category.label
-        info.func = function()
+        rootDescription:CreateRadio(category.label, function() return currentCategory == category.key end, function()
             setCategory(category.key)
-        end
-        info.checked = (currentCategory == category.key)
-        UIDropDownMenu_AddButton(info)
+        end)
     end
 end)
 

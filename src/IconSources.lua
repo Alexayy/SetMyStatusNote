@@ -113,6 +113,7 @@ IconSources.Categories = {
     { key = "items", label = "Items", provider = IconSources.Items },
     { key = "mounts", label = "Mounts", provider = IconSources.Mounts },
     { key = "currencies", label = "Currencies", provider = IconSources.Currencies },
+    { key = "housing", label = "Housing", provider = IconSources.Items }, -- Pull from items for now
     { key = "all", label = "All", provider = IconSources.All },
 }
 

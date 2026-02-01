@@ -1,8 +1,8 @@
-## Interface: 110000
+## Interface: 120000
 ## Title: SetMyStatusNote
 ## Notes: 120-char status, up to 4 icons shown in unit tooltips.
 ## Author: Lekica
-## Version: 1.0
+## Version: 1.2
 ## SavedVariables: SetMyStatusNoteDB, SMSN_Live
 
 src/Addon.lua
