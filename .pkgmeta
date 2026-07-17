@@ -1,0 +1,5 @@
+package-as: SetMyStatusNote
+
+ignore:
+  - .github
+  - README.md

@@ -17,9 +17,7 @@ function IconSources.Spells()
     end
     local icons = {}
     if GetMacroIcons then
-        for _, texture in ipairs(GetMacroIcons() or {}) do
-            addTexture(icons, texture)
-        end
+        GetMacroIcons(icons)
     end
     if #icons == 0 and GetNumMacroIcons and GetMacroIconInfo then
         for index = 1, (GetNumMacroIcons() or 0) do
@@ -37,9 +35,7 @@ function IconSources.Items()
     end
     local icons = {}
     if GetMacroItemIcons then
-        for _, texture in ipairs(GetMacroItemIcons() or {}) do
-            addTexture(icons, texture)
-        end
+        GetMacroItemIcons(icons)
     end
     if #icons == 0 and GetNumMacroItemIcons and GetMacroItemIconInfo then
         for index = 1, (GetNumMacroItemIcons() or 0) do

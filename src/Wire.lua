@@ -40,7 +40,7 @@ function Wire.Parse(message)
         local icons = {}
         if iconsField and iconsField ~= "" then
             for iconPath in iconsField:gmatch("[^,]+") do
-                icons[#icons + 1] = iconPath
+                icons[#icons + 1] = tonumber(iconPath) or iconPath
             end
         end
         return kind, parts[2], parts[3], parts[4], text, icons, colorKey
