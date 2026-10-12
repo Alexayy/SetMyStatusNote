@@ -8,6 +8,9 @@ local lastReplyAtBySender = {}
 
 -- Handles sending note data back to a requesting player.
 local function handleQuery(sender)
+    if Helpers.IsSecret(sender) or not sender then
+        return
+    end
     local now = GetTime()
     local last = lastReplyAtBySender[sender] or 0
     if now - last < Constants.REPLY_COOLDOWN then
@@ -27,6 +30,9 @@ end
 
 -- Stores note data received from another player.
 local function handleData(region, realmSlug, name, text, icons, colorKey)
+    if Helpers.IsSecret(region) or Helpers.IsSecret(realmSlug) or Helpers.IsSecret(name) then
+        return
+    end
     if not (region and realmSlug and name) then
         return
     end
@@ -66,6 +72,9 @@ eventFrame:SetScript("OnEvent", function(_, event, ...)
         return
     end
     local prefix, message, _, sender = ...
+    if Helpers.IsSecret(prefix) or Helpers.IsSecret(message) or Helpers.IsSecret(sender) then
+        return
+    end
     if prefix ~= Constants.PREFIX or not message then
         return
     end

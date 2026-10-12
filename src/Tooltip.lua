@@ -10,6 +10,9 @@ local lastQueryAtByKey = {}
 
 -- Attempts to query the target for updated status data.
 function Tooltip:MaybeQueryTarget(name, realm)
+    if Helpers.IsSecret(name) or Helpers.IsSecret(realm) then
+        return
+    end
     if not name then
         return
     end
@@ -27,6 +30,9 @@ end
 -- Adds saved note information to the tooltip.
 function Tooltip:AddToTooltip(tt)
     local unit = select(2, tt:GetUnit())
+    if Helpers.IsSecret(unit) then
+        return
+    end
     if not unit or not UnitIsPlayer(unit) then
         return
     end
@@ -36,15 +42,19 @@ function Tooltip:AddToTooltip(tt)
     end
     local region = Helpers.Region()
     local key = Helpers.Key(region, realm, name)
+    local isSelf = UnitIsUnit(unit, "player")
+    if Helpers.IsSecret(isSelf) then
+        return
+    end
     local text, icons, colorKey
     local live = SMSN.live[key]
     if live then
         text, icons, colorKey = live.t, live.i, live.c
-        if (GetTime() - (live.ts or 0)) > Constants.CACHE_TTL and not UnitIsUnit(unit, "player") then
+        if (GetTime() - (live.ts or 0)) > Constants.CACHE_TTL and not isSelf then
             Tooltip:MaybeQueryTarget(name, realm)
         end
     else
-        if not UnitIsUnit(unit, "player") then
+        if not isSelf then
             Tooltip:MaybeQueryTarget(name, realm)
         else
             text = Helpers.Trim(SMSN.db.text or "", Constants.MAX_TEXT)
@@ -74,15 +84,12 @@ function Tooltip:Hook()
     if Tooltip.hooked then
         return
     end
-    if TooltipDataProcessor and Enum and Enum.TooltipDataType then
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(tt)
-            Tooltip:AddToTooltip(tt)
-        end)
-    else
-        GameTooltip:HookScript("OnTooltipSetUnit", function(tt)
-            Tooltip:AddToTooltip(tt)
-        end)
+    if not (TooltipDataProcessor and Enum and Enum.TooltipDataType and Enum.TooltipDataType.Unit) then
+        return
     end
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(tt)
+        Tooltip:AddToTooltip(tt)
+    end)
     Tooltip.hooked = true
 end
 

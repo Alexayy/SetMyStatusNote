@@ -2,6 +2,11 @@ local _, SMSN = ...
 
 local Helpers = {}
 
+-- Returns whether a value is protected by WoW's secret-value system.
+function Helpers.IsSecret(value)
+    return issecretvalue and issecretvalue(value) or false
+end
+
 -- Returns the current player region slug.
 function Helpers.Region()
     local map = { "us", "kr", "eu", "tw", "cn" }
@@ -18,6 +23,9 @@ end
 -- Returns unit name and realm with fallbacks.
 function Helpers.UnitNameRealm(unit)
     local name, realm = UnitName(unit)
+    if Helpers.IsSecret(name) or Helpers.IsSecret(realm) then
+        return
+    end
     if not name then
         return
     end
